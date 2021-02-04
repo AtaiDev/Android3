@@ -78,9 +78,9 @@ public class DetailActivity extends AppCompatActivity {
     private void setEachData(Film body) {
         txtTitle.setText(body.getTitle());
         txtDescription.setText(body.getDescription());
-        txtDirector.setText("Director: " + body.getDirector());
-        txtProducer.setText("Producer: " + body.getProducer());
-        txtReleaseDate.setText("Release date: " + body.getReleaseDate());
+        txtDirector.setText(String.format("Director: "+body.getDirector()));
+        txtProducer.setText(String.format("Producer: %s", body.getProducer()));
+        txtReleaseDate.setText(String.format("Release date: " + body.getReleaseDate()));
         txtRating.setText(body.getRtScore());
         if (Integer.parseInt(body.getRtScore()) > 95) rtScore.setRating(5);
         else if (Integer.parseInt(body.getRtScore()) >= 85) rtScore.setRating(4);
