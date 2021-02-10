@@ -10,4 +10,9 @@ public interface FilmSource {
 
     void addFilm(Film film);
 
+    void addFilms(List<Film> listFilm);
+
+    void deleteFilm(Film film);
+
+
 }

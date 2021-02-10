@@ -8,13 +8,17 @@ import android.util.Log;
 import android.view.View;
 import com.example.roomless5depeninjection.App;
 import com.example.roomless5depeninjection.databinding.FragmentFavesBinding;
+import com.example.roomless5depeninjection.domain.models.Film;
 import com.example.roomless5depeninjection.ui.BaseFragment;
 import com.example.roomless5depeninjection.ui.adapters.FavesAdapter;
-import com.example.roomless5depeninjection.ui.dilogs.ShowDetailsFilm;
+import com.example.roomless5depeninjection.ui.dilogs.DialogsDetailShow;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class FavesFragment extends BaseFragment<FragmentFavesBinding> implements FavesAdapter.Listener {
     private static final String FAVES = "faves";
+    private List<Film> filmList = new ArrayList<>();
 
 
     @Override
@@ -25,17 +29,22 @@ public class FavesFragment extends BaseFragment<FragmentFavesBinding> implements
     }
 
     private void initRecycler() {
+        for (int i = 0; i < App.filmRepo.getFilms().size(); i++) {
+            if (App.filmRepo.getFilms().get(i).isSaved()){
+                filmList.add(App.filmRepo.getFilms().get(i));
+            }
+        }
+
         FavesAdapter favesAdapter = new FavesAdapter();
         binding.recyclerFaves.setAdapter(favesAdapter);
-        favesAdapter.setList(App.filmRepo.getFilms());
+        favesAdapter.setList(filmList);
         favesAdapter.setListener(this);
-
     }
 
     @Override
     public void onFavesClick(String favesId) {
-        ShowDetailsFilm showDetailsFilm = ShowDetailsFilm.newInstance(favesId);
-        showDetailsFilm.show(getParentFragmentManager(), ShowDetailsFilm.FRAG_TAG);
+        DialogsDetailShow dialogsDetailShow = DialogsDetailShow.newInstance(favesId);
+        dialogsDetailShow.show(getParentFragmentManager(), DialogsDetailShow.FRAG_TAG);
     }
 
     @Override

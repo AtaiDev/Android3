@@ -26,6 +26,11 @@ public class FilmViewHolder extends RecyclerView.ViewHolder {
     public void onBind(Film film) {
         fBinding.txtTitleFilm.setText(film.getTitle());
         fBinding.txtDescFilm.setText(film.getDescription());
+        if (film.isSaved()) {
+            fBinding.likeBtn.setImageResource(R.drawable.saved_heart);
+        } else {
+            fBinding.likeBtn.setImageResource(R.drawable.heart);
+        }
         clickListeners(film);
     }
 
@@ -38,21 +43,13 @@ public class FilmViewHolder extends RecyclerView.ViewHolder {
                 fBinding.txtDescFilm.setMaxLines(3);
                 fBinding.btnMore.setText(R.string.show_btn);
                 adapter.notifyDataSetChanged();
-
             }
         });
 
-        fBinding
-                .likeBtn
+        fBinding.likeBtn
                 .setOnClickListener(v -> {
-                    if (itemView.getResources().getDrawable(R.drawable.heart).getConstantState()
-                            == fBinding.likeBtn.getDrawable().getConstantState()) {
-                        fBinding.likeBtn.setImageResource(R.drawable.saved_heart);
-                    } else {
-                        fBinding.likeBtn.setImageResource(R.drawable.heart);
-                    }
-                    listenerLike.onLikeClick(film);
+                    film.setSaved(!film.isSaved());
+                    listenerLike.onClickLike(film);
                 });
-
     }
 }

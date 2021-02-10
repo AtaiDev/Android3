@@ -16,8 +16,8 @@
         android:label="Favorite"
         tools:layout="@layout/fragment_faves" />
     <dialog
-        android:id="@+id/showDetailsFilm"
-        android:name="com.example.roomless5depeninjection.ui.dilogs.ShowDetailsFilm"
+        android:id="@+id/dialogsDetailShow"
+        android:name="com.example.roomless5depeninjection.ui.dilogs.DialogsDetailShow"
         android:label="diolog_deteil"
         tools:layout="@layout/diolog_deteil" />
 

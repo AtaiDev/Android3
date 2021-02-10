@@ -50,11 +50,20 @@ public class Film{
     @SerializedName("url")
     private String url;
 
+    private boolean isSaved = false;
+
     public Film(String title, String description) {
         this.title = title;
         this.description = description;
     }
 
+    public boolean isSaved() {
+        return isSaved;
+    }
+
+    public void setSaved(boolean saved) {
+        isSaved = saved;
+    }
 
     //    @SerializedName("length")
 //    private Object length;

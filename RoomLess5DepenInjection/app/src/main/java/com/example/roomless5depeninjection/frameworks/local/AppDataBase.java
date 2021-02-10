@@ -12,7 +12,7 @@ import com.example.roomless5depeninjection.frameworks.local.converters.MyConvert
 import com.example.roomless5depeninjection.frameworks.local.dao.FilmDao;
 import com.example.roomless5depeninjection.frameworks.local.dao.ProducerDao;
 
-@Database(entities = {Film.class, Producer.class}, version = 4)
+@Database(entities = {Film.class, Producer.class}, version = 6)
 @TypeConverters({MyConverter.class})
 public abstract class AppDataBase extends RoomDatabase {
 

@@ -26,11 +26,7 @@ public interface FilmDao {
     @Update
     void updateFilm(Film film);
 
-    @Query("Select * From film")
+    @Query("Select * From film ORDER BY isSaved DESC")
     List<Film> getFilms();
-
-
-
-
 
 }

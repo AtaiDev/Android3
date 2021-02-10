@@ -19,7 +19,7 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class ShowDetailsFilm extends DialogFragment {
+public class DialogsDetailShow extends DialogFragment {
     private static final String FILM_ID = "film_id";
     public static final String FRAG_TAG = "fragTag";
     private static final String TAG = "dialog";
@@ -28,8 +28,8 @@ public class ShowDetailsFilm extends DialogFragment {
 
     private String filmId;
 
-    public static ShowDetailsFilm newInstance(String filmId) {
-        ShowDetailsFilm frag = new ShowDetailsFilm();
+    public static DialogsDetailShow newInstance(String filmId) {
+        DialogsDetailShow frag = new DialogsDetailShow();
         Bundle args = new Bundle();
         args.putString(FILM_ID, filmId);
         frag.setArguments(args);

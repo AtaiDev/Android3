@@ -46,6 +46,6 @@ public class FilmAdapter extends RecyclerView.Adapter<FilmViewHolder> {
 
 
     public interface ListenerLike {
-        void onLikeClick(Film film);
+        void onClickLike(Film film);
     }
 }
