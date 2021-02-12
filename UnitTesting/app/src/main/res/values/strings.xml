@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">UnitTesting</string>
+
+    <string name="url">URL</string>
+    <string name="path">PATH</string>
+    <string name="unknown">UNKNOWN</string>
+
+</resources>
