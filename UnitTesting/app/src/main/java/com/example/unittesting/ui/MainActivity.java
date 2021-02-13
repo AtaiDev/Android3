@@ -3,12 +3,13 @@ package com.example.unittesting.ui;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
-
+import android.text.TextUtils;
 import com.example.unittesting.databinding.ActivityMainBinding;
 import com.example.unittesting.domain.Math;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String UNIT = "oneone";
     private ActivityMainBinding binding;
     private Math math;
 
@@ -27,31 +28,23 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void subtract() {
-        int first_num = Integer.parseInt(getFirstInput());
-        int second_num = Integer.parseInt(getSecondInput());
-        binding.txtSumView.setText(String.valueOf(math.subtractFunction(first_num, second_num)));
+    private void subtract() {
+        validateSubtracting(getFirstInput(),getSecondInput());
     }
 
+
     public void addingFunc() {
-        int first_num = Integer.parseInt(getFirstInput());
-        int second_num = Integer.parseInt(getSecondInput());
-        binding.txtSumView.setText(String.valueOf(math.addFunction(first_num, second_num)));
+        validateAddition(getFirstInput(),getSecondInput());
     }
 
     public void multiple() {
-        int first_num = Integer.parseInt(getFirstInput());
-        int second_num = Integer.parseInt(getSecondInput());
-        binding.txtSumView.setText(String.valueOf(math.multiplication(first_num, second_num)));
-
+        validateMultiple(getFirstInput(),getSecondInput());
     }
+
 
     public void divide() {
-        int first_num = Integer.parseInt(getFirstInput());
-        int second_num = Integer.parseInt(getSecondInput());
-        binding.txtSumView.setText(String.valueOf(math.divideFunction(first_num, second_num)));
+        validateDivide(getFirstInput(),getSecondInput());
     }
-
 
     public String getFirstInput() {
         return binding.firstNum.getText().toString();
@@ -61,4 +54,78 @@ public class MainActivity extends AppCompatActivity {
         return binding.secondNum.getText().toString();
     }
 
+
+
+    public void validateDivide(String first,String second){
+
+        Integer first_num;
+        Integer second_num;
+        if (!first.isEmpty() && !second.isEmpty()) {
+            if (TextUtils.isDigitsOnly(first) && TextUtils.isDigitsOnly(second)) {
+                first_num = Integer.parseInt(first);
+                second_num = Integer.parseInt(second);
+                if (first_num > 0 && second_num > 0)
+                    binding.txtSumView.setText(String.valueOf(math.divideFunction(first_num, second_num)));
+                else binding.txtSumView.setText("you can't divide to 0");
+            } else {
+                binding.txtSumView.setText("please provide valid input");
+            }
+        } else {
+            binding.txtSumView.setText("field can't be empty");
+        }
+
+    }
+    public void validateMultiple(String first,String second){
+        Integer first_num;
+        Integer second_num;
+        if (!first.isEmpty() && !second.isEmpty()) {
+            if (TextUtils.isDigitsOnly(first) && TextUtils.isDigitsOnly(second)) {
+                first_num = Integer.parseInt(first);
+                second_num = Integer.parseInt(second);
+                if (first_num > 0 && second_num > 0)
+                    binding.txtSumView.setText(String.valueOf(math.multiplication(first_num, second_num)));
+                else binding.txtSumView.setText("you can't divide to 0");
+            } else {
+                binding.txtSumView.setText("please provide valid input");
+            }
+        } else {
+            binding.txtSumView.setText("field can't be empty");
+        }
+
+    }
+    public void validateAddition(String first,String second){
+        Integer first_num;
+        Integer second_num;
+        if (!first.isEmpty() && !second.isEmpty()) {
+            if (TextUtils.isDigitsOnly(first) && TextUtils.isDigitsOnly(second)) {
+                first_num = Integer.parseInt(first);
+                second_num = Integer.parseInt(second);
+                if (first_num > 0 && second_num > 0)
+                    binding.txtSumView.setText(String.valueOf(math.addFunction(first_num, second_num)));
+                else binding.txtSumView.setText("you can't divide to 0");
+            } else {
+                binding.txtSumView.setText("please provide valid input");
+            }
+        } else {
+            binding.txtSumView.setText("field can't be empty");
+        }
+
+    }
+    public void validateSubtracting(String first, String second){
+        Integer first_num;
+        Integer second_num;
+        if (!first.isEmpty() && !second.isEmpty()) {
+            if (TextUtils.isDigitsOnly(first) && TextUtils.isDigitsOnly(second)) {
+                first_num = Integer.parseInt(first);
+                second_num = Integer.parseInt(second);
+                if (first_num > 0 && second_num > 0)
+                    binding.txtSumView.setText(String.valueOf(math.subtractFunction(first_num, second_num)));
+                else binding.txtSumView.setText("you can't divide to 0");
+            } else {
+                binding.txtSumView.setText("please provide valid input");
+            }
+        } else {
+            binding.txtSumView.setText("field can't be empty");
+        }
+    }
 }

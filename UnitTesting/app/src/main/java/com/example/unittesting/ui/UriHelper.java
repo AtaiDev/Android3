@@ -5,7 +5,6 @@ import android.content.Context;
 import com.example.unittesting.R;
 
 import java.net.URI;
-import java.net.URL;
 
 
 public class UriHelper {
@@ -17,21 +16,21 @@ public class UriHelper {
     }
 
 
-    public String validate(String uri){
-        if (isUrl(uri)){
+    public String validate(String uri) {
+        if (isUrl(uri)) {
             return context.getString(R.string.url);
-        }else if (isPath(uri)){
+        } else if (isPath(uri)) {
             return context.getString(R.string.path);
-        }else {
+        } else {
             return context.getString(R.string.unknown);
         }
     }
 
-    public boolean isUrl(String uri){
+    public boolean isUrl(String uri) {
         return "https".equals(URI.create(uri).getScheme());
     }
 
-    public boolean isPath(String uri){
+    public boolean isPath(String uri) {
         return "file".equals(URI.create(uri).getScheme());
     }
 
