@@ -22,9 +22,9 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.example.googlemap.App;
 import com.example.googlemap.R;
-import com.example.googlemap.data.local.models.LatLngTab;
+import com.example.googlemap.data.AppDatabase;
+import com.example.googlemap.data.local.models.LatLngCord;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -50,8 +50,9 @@ public class MainActivity extends AppCompatActivity implements
     private static final String KEY_LATLNG = "latlng";
     private com.example.googlemap.databinding.ActivityMainBinding binding;
     private GoogleMap map;
-    private List<LatLng> latLngList = new ArrayList<>();
+    private final List<LatLng> latLngList = new ArrayList<>();
 
+    private AppDatabase appDatabase;
 
 
     @Override
@@ -59,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         binding = com.example.googlemap.databinding.ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
+        appDatabase = AppDatabase.getInstance(this);
         setMapFragment();
         btnListeners();
 
@@ -67,7 +68,6 @@ public class MainActivity extends AppCompatActivity implements
                 this,
                 new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                 LOCATION_REQUEST_CODE);
-
 
 
     }
@@ -89,6 +89,12 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     private void btnListeners() {
+
+        if (!appDatabase.coordinateDao().getAll().isEmpty()) {
+            for (int i = 0; i < appDatabase.coordinateDao().getAll().size(); i++) {
+                latLngList.add(appDatabase.coordinateDao().getAll().get(i).getLatLng());
+            }
+        }
 
         binding.applyGone.setOnClickListener(v -> {
 //            PolygonOptions polygonOptions = new PolygonOptions().addAll(latLngList)
@@ -129,11 +135,26 @@ public class MainActivity extends AppCompatActivity implements
     public void onMapReady(GoogleMap googleMap) {
 //        CameraPosition position = CameraPosition.fromLatLngZoom(new LatLng(42.8777087,74.6225106),15);
         map = googleMap;
+
+        if (!appDatabase.coordinateDao().getAll().isEmpty()) {
+            for (int i = 0; i < appDatabase.coordinateDao().getAll().size(); i++) {
+                MarkerOptions markerOptions = new MarkerOptions()
+                        .position(appDatabase
+                                .coordinateDao()
+                                .getAll().get(i)
+                                .getLatLng())
+                        .draggable(true)
+                        .anchor(0.68f, 0.35f)
+                        .icon(vectorToBitmap(R.drawable.ic_cursor, Color.parseColor("#f50049")));
+                map.addMarker(markerOptions);
+            }
+        }
+
+
         map.setOnMapClickListener(this);
         map.setOnMarkerClickListener(this);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(42.8777087, 74.6225106), 15));
         map.getUiSettings().setZoomControlsEnabled(true);
-
 
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) ==
@@ -146,21 +167,17 @@ public class MainActivity extends AppCompatActivity implements
         }
 
 
-
     }
 
     @Override
     public void onMapClick(LatLng latLng) {
-        LatLngTab latLngTab = new LatLngTab(latLng.latitude,latLng.longitude);
-        App.getDatabase().coordinateDao().insertLatLng(latLngTab);
-        Log.e(KEY_LATLNG, "onMapClick: "+ latLng.latitude +" "+ latLng.longitude);
 
 
+        appDatabase.coordinateDao().insertLatLng(new LatLngCord(latLng));
 
+        Log.e(KEY_LATLNG, "onMapClick: " + latLng.latitude + " " + latLng.longitude);
 
         latLngList.add(latLng);
-
-
 
         MarkerOptions markerOptions = new MarkerOptions()
                 .position(latLng)
@@ -168,16 +185,17 @@ public class MainActivity extends AppCompatActivity implements
                 .anchor(0.68f, 0.35f)
                 .icon(vectorToBitmap(R.drawable.ic_cursor, Color.parseColor("#f50049")));
 
+
         map.addMarker(markerOptions);
 
-
-
+        Log.e(KEY_LATLNG, "onMapClick: " + appDatabase.coordinateDao().getAll().toString());
 
     }
 
     // svg to Drawable without color custom;
     private BitmapDescriptor vectorToBitmap(@DrawableRes int id) {
         Drawable vectorDrawable = ResourcesCompat.getDrawable(getResources(), id, null);
+        assert vectorDrawable != null;
         Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
                 vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
@@ -189,6 +207,7 @@ public class MainActivity extends AppCompatActivity implements
     // with custom color to icon !
     private BitmapDescriptor vectorToBitmap(@DrawableRes int id, @ColorInt int color) {
         Drawable vectorDrawable = ResourcesCompat.getDrawable(getResources(), id, null);
+        assert vectorDrawable != null;
         Bitmap bitmap = Bitmap.createBitmap(vectorDrawable.getIntrinsicWidth(),
                 vectorDrawable.getIntrinsicHeight(), Bitmap.Config.ARGB_8888);
         Canvas canvas = new Canvas(bitmap);
@@ -201,6 +220,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public boolean onMarkerClick(Marker marker) {
         marker.remove();
+        appDatabase.coordinateDao().deleteLatLng(marker.getPosition());
         return false;
     }
 
@@ -229,13 +249,11 @@ public class MainActivity extends AppCompatActivity implements
                 break;
             case R.id.clear_map:
                 map.clear();
+                appDatabase.coordinateDao().deleteAll();
                 break;
         }
         return super.onOptionsItemSelected(item);
     }
-
-
-
 
 
 }
