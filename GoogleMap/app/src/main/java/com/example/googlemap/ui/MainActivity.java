@@ -22,9 +22,11 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
+import com.example.googlemap.App;
 import com.example.googlemap.R;
 import com.example.googlemap.data.AppDatabase;
 import com.example.googlemap.data.local.models.LatLngCord;
+import com.example.googlemap.data.local.sharedpref.Prefs;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -45,12 +47,14 @@ public class MainActivity extends AppCompatActivity implements
         OnMapReadyCallback,
         GoogleMap.OnMapClickListener,
         GoogleMap.OnMarkerClickListener {
-
+    private final static String LOG_E = "loge";
     private final static int LOCATION_REQUEST_CODE = 9;
     private static final String KEY_LATLNG = "latlng";
     private com.example.googlemap.databinding.ActivityMainBinding binding;
     private GoogleMap map;
     private final List<LatLng> latLngList = new ArrayList<>();
+    private boolean isPolygon;
+
 
     private AppDatabase appDatabase;
 
@@ -90,35 +94,34 @@ public class MainActivity extends AppCompatActivity implements
 
     private void btnListeners() {
 
-        if (!appDatabase.coordinateDao().getAll().isEmpty()) {
-            for (int i = 0; i < appDatabase.coordinateDao().getAll().size(); i++) {
-                latLngList.add(appDatabase.coordinateDao().getAll().get(i).getLatLng());
-            }
-        }
 
         binding.applyGone.setOnClickListener(v -> {
-//            PolygonOptions polygonOptions = new PolygonOptions().addAll(latLngList)
-//                    .strokeColor(R.color.yellow)
-//                    .strokeWidth(5f);
+
 
             if (!latLngList.isEmpty()) {
+                map.clear();
                 map.addPolygon(
                         new PolygonOptions()
                                 .addAll(latLngList)
                                 .strokeColor(Color.RED)
                                 .fillColor(Color.BLACK)
                                 .strokeWidth(4f));
+
+
             } else {
                 Toast.makeText(this, "Please provide markers", Toast.LENGTH_SHORT).show();
             }
+
         });
 
         binding.applyLine.setOnClickListener(v -> {
+            map.clear();
             map.addPolyline(
                     new PolylineOptions()
                             .addAll(latLngList)
                             .endCap(new RoundCap())
             );
+
         });
 
     }
@@ -133,11 +136,14 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-//        CameraPosition position = CameraPosition.fromLatLngZoom(new LatLng(42.8777087,74.6225106),15);
+//        CameraPosition position = CameraPosition.fromLatLngZoom(new LatLng(a.8777087,74.6225106),15);
         map = googleMap;
+        map.setOnMapClickListener(this);
 
-        if (!appDatabase.coordinateDao().getAll().isEmpty()) {
+//        if (!appDatabase.coordinateDao().getAll().isEmpty()) {
+        if (!latLngList.isEmpty()) {
             for (int i = 0; i < appDatabase.coordinateDao().getAll().size(); i++) {
+
                 MarkerOptions markerOptions = new MarkerOptions()
                         .position(appDatabase
                                 .coordinateDao()
@@ -146,12 +152,29 @@ public class MainActivity extends AppCompatActivity implements
                         .draggable(true)
                         .anchor(0.68f, 0.35f)
                         .icon(vectorToBitmap(R.drawable.ic_cursor, Color.parseColor("#f50049")));
+
                 map.addMarker(markerOptions);
+
+                Log.e(LOG_E, "onMapReady: " + Prefs.getPolygonState());
+
+
+            }
+            if (Prefs.getPolygonState()) {
+                map.addPolygon(new PolygonOptions()
+                        .addAll(latLngList)
+                        .strokeColor(Color.RED)
+                        .fillColor(Color.BLACK)
+                        .strokeWidth(4f));
+            } else {
+                map.addPolyline(
+                        new PolylineOptions()
+                                .addAll(latLngList)
+                                .endCap(new RoundCap())
+                );
+
             }
         }
 
-
-        map.setOnMapClickListener(this);
         map.setOnMarkerClickListener(this);
         map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(42.8777087, 74.6225106), 15));
         map.getUiSettings().setZoomControlsEnabled(true);
@@ -163,10 +186,7 @@ public class MainActivity extends AppCompatActivity implements
                         == PackageManager.PERMISSION_GRANTED) {
 
             map.setMyLocationEnabled(true);
-
         }
-
-
     }
 
     @Override
@@ -256,4 +276,15 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if (!appDatabase.coordinateDao().getAll().isEmpty()) {
+            for (int i = 0; i < appDatabase.coordinateDao().getAll().size(); i++) {
+                latLngList.add(appDatabase.coordinateDao().getAll().get(i).getLatLng());
+            }
+
+        }
+    }
 }

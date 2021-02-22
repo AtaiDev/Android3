@@ -23,5 +23,4 @@ public class Converter {
         return  new Gson().fromJson(json,type);
     }
 
-
 }
