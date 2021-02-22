@@ -22,7 +22,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Toast;
 
-import com.example.googlemap.App;
+
 import com.example.googlemap.R;
 import com.example.googlemap.data.AppDatabase;
 import com.example.googlemap.data.local.models.LatLngCord;
@@ -53,7 +53,7 @@ public class MainActivity extends AppCompatActivity implements
     private com.example.googlemap.databinding.ActivityMainBinding binding;
     private GoogleMap map;
     private final List<LatLng> latLngList = new ArrayList<>();
-    private boolean isPolygon;
+
 
 
     private AppDatabase appDatabase;
@@ -106,6 +106,7 @@ public class MainActivity extends AppCompatActivity implements
                                 .strokeColor(Color.RED)
                                 .fillColor(Color.BLACK)
                                 .strokeWidth(4f));
+                Prefs.putPolygon();
 
 
             } else {
@@ -122,6 +123,7 @@ public class MainActivity extends AppCompatActivity implements
                             .endCap(new RoundCap())
             );
 
+            Prefs.putPolyline();
         });
 
     }
@@ -140,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements
         map = googleMap;
         map.setOnMapClickListener(this);
 
-//        if (!appDatabase.coordinateDao().getAll().isEmpty()) {
+
         if (!latLngList.isEmpty()) {
             for (int i = 0; i < appDatabase.coordinateDao().getAll().size(); i++) {
 
